@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="style.css">
   </head>
 
-
 <body>
 <canvas id="gameCanvas" width="480" height="320"></canvas>
 <button id="restartButton" style="display: none;">Restart Game</button>
@@ -111,7 +110,7 @@ window.addEventListener('keydown', function(e) {
 
 canvas.addEventListener('mousedown', function(e) {
     if (player.y + player.height >= canvas.height) {
-        player.yVelocity = 10;
+        player.yVelocity = -10;
         player.jumping = true;
     }
 });
