@@ -8,6 +8,8 @@
     <title>NepaliStores</title>
     <link rel="stylesheet" href="style.css">
   </head>
+
+
 <body>
 <canvas id="gameCanvas" width="480" height="320"></canvas>
 <button id="restartButton" style="display: none;">Restart Game</button>
@@ -31,6 +33,8 @@ var blockWidth = 50;
 var blockHeight = 50;
 var score = 0;
 var gameOver = false;
+var blockSpawnInterval = 1500;
+var lastBlockSpawnTime = Date.now();
 
 function updateGame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -50,8 +54,9 @@ function updateGame() {
     player.y += player.yVelocity;
 
     // Generate blocks
-    if (Math.random() < 0.01) {
+    if (Date.now() - lastBlockSpawnTime > blockSpawnInterval) {
         blocks.push({ x: canvas.width, y: canvas.height - blockHeight, width: blockWidth, height: blockHeight });
+        lastBlockSpawnTime = Date.now();
     }
 
     // Draw and update blocks
@@ -98,14 +103,14 @@ function updateGame() {
 updateGame();
 
 window.addEventListener('keydown', function(e) {
-    if (e.code === 'Space' && !player.jumping) {
+    if (e.code === 'Space' && player.y + player.height >= canvas.height) {
         player.yVelocity = -10;
         player.jumping = true;
     }
 });
 
 canvas.addEventListener('mousedown', function(e) {
-    if (!player.jumping) {
+    if (player.y + player.height >= canvas.height) {
         player.yVelocity = -10;
         player.jumping = true;
     }
@@ -118,9 +123,9 @@ restartButton.addEventListener('click', function(e) {
     score = 0;
     gameOver = false;
     restartButton.style.display = "none";
+    lastBlockSpawnTime = Date.now();
     updateGame();
 });
 </script>
 </body>
 </html>
-
