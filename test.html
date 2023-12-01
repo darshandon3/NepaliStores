@@ -1,18 +1,90 @@
+
 <!DOCTYPE html>
-<html lang="en">
-  <head>
+<html>
+	<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>NepaliStores</title>
     <link rel="stylesheet" href="style.css">
   </head>
-  <body>
-<H1>Test1</H1>
-	  <button href="https://www.nepalistores.com/">
-		  <button href="https://www.nepalistores.com/">
-		  <form action="https://www.nepalistores.com">
-    <input type="submit" value="Go to main" />
-	<script src="index.js"></script>
-  </body>
+<body>
+<canvas id="gameCanvas" width="480" height="320"></canvas>
+<script>
+var canvas = document.getElementById("gameCanvas");
+var ctx = canvas.getContext("2d");
+
+var player = {
+    x: 50,
+    y: 200,
+    width: 50,
+    height: 50,
+    yVelocity: 0,
+    jumping: false
+};
+
+var gravity = 1;
+var blocks = [];
+var blockWidth = 50;
+var blockHeight = 50;
+
+function updateGame() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw player
+    ctx.fillStyle = "#FF0000";
+    ctx.fillRect(player.x, player.y, player.width, player.height);
+
+    // Apply gravity
+    if (player.y + player.height < canvas.height) {
+        player.yVelocity += gravity;
+    } else {
+        player.yVelocity = 0;
+        player.jumping = false;
+    }
+
+    player.y += player.yVelocity;
+
+    // Generate blocks
+    if (Math.random() < 0.01) {
+        blocks.push({ x: canvas.width, y: canvas.height - blockHeight, width: blockWidth, height: blockHeight });
+    }
+
+    // Draw and update blocks
+    ctx.fillStyle = "#0000FF";
+    for (var i = 0; i < blocks.length; i++) {
+        var block = blocks[i];
+        block.x -= 2;
+        ctx.fillRect(block.x, block.y, block.width, block.height);
+
+        // Collision detection
+        if (player.x < block.x + block.width &&
+            player.x + player.width > block.x &&
+            player.y < block.y + block.height &&
+            player.y + player.height > block.y) {
+            // End game
+            blocks = [];
+            alert("Game Over!");
+            return;
+        }
+    }
+
+    // Remove off-screen blocks
+    while (blocks.length > 0 && blocks[0].x + blocks[0].width < 0) {
+        blocks.shift();
+    }
+
+    requestAnimationFrame(updateGame);
+}
+
+updateGame();
+
+window.addEventListener('keydown', function(e) {
+    if (e.code === 'Space' && !player.jumping) {
+        player.yVelocity = -10;
+        player.jumping = true;
+    }
+});
+</script>
+</body>
 </html>
