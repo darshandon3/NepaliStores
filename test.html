@@ -111,7 +111,7 @@ window.addEventListener('keydown', function(e) {
 
 canvas.addEventListener('mousedown', function(e) {
     if (player.y + player.height >= canvas.height) {
-        player.yVelocity = -10;
+        player.yVelocity = 10;
         player.jumping = true;
     }
 });
