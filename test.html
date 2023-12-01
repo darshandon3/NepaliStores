@@ -10,9 +10,11 @@
   </head>
 <body>
 <canvas id="gameCanvas" width="480" height="320"></canvas>
+<button id="restartButton" style="display: none;">Restart Game</button>
 <script>
 var canvas = document.getElementById("gameCanvas");
 var ctx = canvas.getContext("2d");
+var restartButton = document.getElementById("restartButton");
 
 var player = {
     x: 50,
@@ -27,6 +29,8 @@ var gravity = 1;
 var blocks = [];
 var blockWidth = 50;
 var blockHeight = 50;
+var score = 0;
+var gameOver = false;
 
 function updateGame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -64,8 +68,15 @@ function updateGame() {
             player.y + player.height > block.y) {
             // End game
             blocks = [];
-            alert("Game Over!");
+            gameOver = true;
+            restartButton.style.display = "block";
             return;
+        }
+
+        // Score calculation
+        if (block.x + block.width < player.x && block.scored === undefined) {
+            block.scored = true;
+            score++;
         }
     }
 
@@ -74,7 +85,14 @@ function updateGame() {
         blocks.shift();
     }
 
-    requestAnimationFrame(updateGame);
+    // Draw score
+    ctx.fillStyle = "#000000";
+    ctx.font = "30px Arial";
+    ctx.fillText("Score: " + score, 10, 50);
+
+    if (!gameOver) {
+        requestAnimationFrame(updateGame);
+    }
 }
 
 updateGame();
@@ -85,6 +103,24 @@ window.addEventListener('keydown', function(e) {
         player.jumping = true;
     }
 });
+
+canvas.addEventListener('mousedown', function(e) {
+    if (!player.jumping) {
+        player.yVelocity = -10;
+        player.jumping = true;
+    }
+});
+
+restartButton.addEventListener('click', function(e) {
+    player.y = 200;
+    player.yVelocity = 0;
+    player.jumping = false;
+    score = 0;
+    gameOver = false;
+    restartButton.style.display = "none";
+    updateGame();
+});
 </script>
 </body>
 </html>
+
